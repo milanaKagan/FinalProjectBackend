@@ -16,5 +16,12 @@
   "bugs": {
     "url": "https://github.com/milanaKagan/FinalProjectBackend/issues"
   },
-  "homepage": "https://github.com/milanaKagan/FinalProjectBackend#readme"
+  "homepage": "https://github.com/milanaKagan/FinalProjectBackend#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "knex": "^0.95.10",
+    "node": "^16.6.1",
+    "pg": "^8.7.1",
+    "raw": "^0.1.4"
+  }
 }
