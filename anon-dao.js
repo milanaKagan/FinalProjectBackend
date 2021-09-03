@@ -108,5 +108,6 @@ module.exports = {
         get_arrival_flights,
         get_departure_flights,
         get_flights_by_airline_id,
-        get_flights_by_parameters
+        get_flights_by_parameters,
+        insert_user,
 }
