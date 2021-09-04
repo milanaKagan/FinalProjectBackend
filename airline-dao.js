@@ -10,74 +10,168 @@ function try_func(f) {
 function delete_airline_flights(id) {
 
         const f = async () => {
-                const result = await raw_repo.getRawResult(`select * from sp_delete_airline_flights(${id})`);
-                console.log(result.rows[0].sp_delete_airline_flights);
+                if (id <= 0 || id == null) {
+                        console.log('delete_airline_flights function: id is invalid');
+                }
+                else {
+                        const result = await raw_repo.getRawResult(`select * from sp_delete_airline_flights(${id})`);
+                        console.log(result.rows[0].sp_delete_airline_flights);
+                }
         }
         return try_func(f);
 }
 function delete_customer(id) {
 
         const f = async () => {
-                const result = await raw_repo.getRawResult(`select * from sp_delete_customer(${id})`);
-                console.log(result.rows[0].sp_delete_customer);
+                if (id <= 0 || id == null) {
+                        console.log('delete_customer function: id is invalid');
+                }
+                else {
+                        const result = await raw_repo.getRawResult(`select * from sp_delete_customer(${id})`);
+                        console.log(result.rows[0].sp_delete_customer);
+                }
         }
         return try_func(f);
 }
 function delete_tickets(id) {
 
         const f = async () => {
-                const result = await raw_repo.getRawResult(`select * from sp_delete_tickets(${id})`);
-                console.log(result.rows[0].sp_delete_tickets);
+                if (id <= 0 || id == null) {
+                        console.log('delete_tickets function: id is invalid');
+                }
+                else {
+                        const result = await raw_repo.getRawResult(`select * from sp_delete_tickets(${id})`);
+                        console.log(result.rows[0].sp_delete_tickets);
+                }
         }
         return try_func(f);
 }
 function delete_flight_tickets(id) {
 
         const f = async () => {
-                const result = await raw_repo.getRawResult(`select * from sp_delete_flight_tickets(${id})`);
-                console.log(result.rows[0].sp_delete_flight_tickets);
+                if (id <= 0 || id == null) {
+                        console.log('delete_flight_tickets function: id is invalid');
+                }
+                else {
+                        const result = await raw_repo.getRawResult(`select * from sp_delete_flight_tickets(${id})`);
+                        console.log(result.rows[0].sp_delete_flight_tickets);
+                }
         }
         return try_func(f);
-} 
+}
 function get_airline_by_username(username) {
 
         const f = async () => {
-                const result = await raw_repo.getRawResult(`select * from sp_get_airline_by_username('${username}')`);
-                console.log(result.rows);
+                if (username == '' || username == null) {
+                        console.log('get_airline_by_username function: username is null or empty');
+                }
+                else {
+                        const result = await raw_repo.getRawResult(`select * from sp_get_airline_by_username('${username}')`);
+                        console.log(result.rows);
+                }
         }
         return try_func(f);
 }
-function insert_airline(name,countryId,userId) {
+function insert_airline(name, countryId, userId) {
 
         const f = async () => {
-                const result = await raw_repo.getRawResult(`select * from sp_insert_airline('${name}',${countryId},${userId})`);
-                console.log(result.rows[0].sp_insert_airline);
+                if (name == '' || name == null) {
+                        console.log('insert_airline function: name is null or empty');
+                }
+                if (countryId <= 0 || countryId == null) {
+                        console.log('insert_airline function: countryId is invalid');
+                }
+                if (userId <= 0 || userId == null) {
+                        console.log('insert_airline function: userId is invalid');
+                }
+                else {
+                        const result = await raw_repo.getRawResult(`select * from sp_insert_airline('${name}',${countryId},${userId})`);
+                        console.log(result.rows[0].sp_insert_airline);
+                }
         }
         return try_func(f);
 }
-function insert_flight(airlineId,originCountryId,destinationContryId,departureTime,landingTime,remainingTickets) {
+function insert_flight(airlineId, originCountryId, destinationContryId, departureTime, landingTime, remainingTickets) {
 
         const f = async () => {
-                const result = await raw_repo
-                .getRawResult(`select * from sp_insert_flight(${airlineId},${originCountryId},${destinationContryId},'${departureTime}','${landingTime}',${remainingTickets})`);
-                console.log(result.rows[0].sp_insert_flight);
+                if (airlineId <= 0 || airlineId == null) {
+                        console.log('insert_flight function: airlineId is invalid');
+                }
+                if (originCountryId <= 0 || originCountryId == null) {
+                        console.log('insert_flight function: originCountryId is invalid');
+                }
+                if (destinationContryId <= 0 || destinationContryId == null) {
+                        console.log('insert_flight function: destinationContryId is invalid');
+                }
+                if (departureTime == '' || departureTime == null) {
+                        console.log('insert_flight function: departureTime is null or empty');
+                }
+                if (landingTime == '' || landingTime == null) {
+                        console.log('insert_flight function: landingTime is null or empty');
+                }
+                if (remainingTickets <= 0 || remainingTickets == null) {
+                        console.log('insert_flight function: remainingTickets is invalid');
+                }
+                else {
+
+                        const result = await raw_repo
+                                .getRawResult(`select * from sp_insert_flight(${airlineId},${originCountryId},${destinationContryId},'${departureTime}','${landingTime}',${remainingTickets})`);
+                        console.log(result.rows[0].sp_insert_flight);
+                }
         }
         return try_func(f);
 }
-function update_flight(id,airlineId,originCountryId,destinationContryId,departureTime,landingTime,remainingTickets) {
+function update_flight(id, airlineId, originCountryId, destinationContryId, departureTime, landingTime, remainingTickets) {
 
         const f = async () => {
-                const result = await raw_repo
-                .getRawResult(`select * from sp_update_flight(${id},${airlineId},${originCountryId},${destinationContryId},'${departureTime}','${landingTime}',${remainingTickets})`);
-                console.log(result.rows[0].sp_update_flight);
+                if (id <= 0 || id == null) {
+                        console.log('update_flight function: airlineId is invalid');
+                }
+                if (airlineId <= 0 || airlineId == null) {
+                        console.log('update_flight function: airlineId is invalid');
+                }
+                if (originCountryId <= 0 || originCountryId == null) {
+                        console.log('update_flight function: originCountryId is invalid');
+                }
+                if (destinationContryId <= 0 || destinationContryId == null) {
+                        console.log('update_flight function: destinationContryId is invalid');
+                }
+                if (departureTime == '' || departureTime == null) {
+                        console.log('update_flight function: departureTime is null or empty');
+                }
+                if (landingTime == '' || landingTime == null) {
+                        console.log('update_flight function: landingTime is null or empty');
+                }
+                if (remainingTickets <= 0 || remainingTickets == null) {
+                        console.log('update_flight function: remainingTickets is invalid');
+                }
+                else {
+                        const result = await raw_repo
+                                .getRawResult(`select * from sp_update_flight(${id},${airlineId},${originCountryId},${destinationContryId},'${departureTime}','${landingTime}',${remainingTickets})`);
+                        console.log(result.rows[0].sp_update_flight);
+                }
         }
         return try_func(f);
 }
-function update_airline(id,name,countryId,userId) {
+function update_airline(id, name, countryId, userId) {
 
         const f = async () => {
-                const result = await raw_repo.getRawResult(`select * from sp_update_airline(${id},'${name}',${countryId},${userId})`);
-                console.log(result.rows[0].sp_update_airline);
+                if (id <= 0 || id == null) {
+                        console.log('update_airline function: id is invalid');
+                }
+                if (name == '' || name == null) {
+                        console.log('update_airline function: name is null or empty');
+                }
+                if (countryId <= 0 || countryId == null) {
+                        console.log('update_airline function: countryId is invalid');
+                }
+                if (userId <= 0 || userId == null) {
+                        console.log('update_airline function: userId is invalid');
+                }
+                else {
+                        const result = await raw_repo.getRawResult(`select * from sp_update_airline(${id},'${name}',${countryId},${userId})`);
+                        console.log(result.rows[0].sp_update_airline);
+                }
         }
         return try_func(f);
 }
