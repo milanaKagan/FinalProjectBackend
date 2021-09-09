@@ -1,7 +1,7 @@
 const anon_dao = require('./anon-dao');
 //const airline_dao = require('./airline-dao');
-const customer_dao = require('./customer-dao');
-customer_dao.update_user(13,'mokaqq2','tahatd1','mokamailc2');
+//const customer_dao = require('./customer-dao');
+//customer_dao.update_user(13,'mokaqq2','tahatd1','mokamailc2');
 //customer_dao.insert_ticket(12,12);
 //customer_dao.update_ticket(11,11,12)
 //customer_dao.get_ticket_by_id(10);
@@ -20,7 +20,9 @@ customer_dao.update_user(13,'mokaqq2','tahatd1','mokamailc2');
 //admin_dao.delete_customers_user(4);
 //console.log(admin_dao.get_all_customers());
 //anon_dao.insert_user('moka2','tahat1','mokamail2');
-//anon_dao.get_flight_by_id(1);
+anon_dao.get_flight_by_id(1).then(function(result) {
+    console.log(result) // "Some User token"
+ });
 //anon_dao.get_all_flights();
 //anon_dao.get_all_airlines();
 //anon_dao.get_airline_by_id(10);

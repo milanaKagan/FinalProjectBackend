@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha anon-dao-test.js"
   },
   "repository": {
     "type": "git",
@@ -18,8 +18,10 @@
   },
   "homepage": "https://github.com/milanaKagan/FinalProjectBackend#readme",
   "dependencies": {
+    "chai": "^4.3.4",
     "express": "^4.17.1",
     "knex": "^0.95.10",
+    "mocha": "^9.1.1",
     "node": "^16.6.1",
     "pg": "^8.7.1",
     "raw": "^0.1.4",
