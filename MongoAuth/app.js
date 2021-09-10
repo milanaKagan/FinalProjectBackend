@@ -28,8 +28,9 @@ mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
 
 // routes
 app.get('*', checkUser);
-app.get('/', (req, res) => res.render('home'));
+app.get('/', checkUser,(req, res) => res.render('home'));
 app.get('/smoothies', requireAuth,(req, res) => res.render('smoothies'));
+app.get('/smoothies-specials', requireAuth,(req, res) => res.render('smoothies-special'));
 app.use(authRoutes);
 
 app.listen(port, () => console.log(`Listening to port ${port}`));

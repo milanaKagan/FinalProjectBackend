@@ -14,6 +14,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Please enter a password'],
         minlength: [6, 'Minimum password length is 6 characters']
+    },
+    role: {
+        type: Boolean,
+        required: [true, 'Role is required']
     }
 });
 // fire a function after doc saved to db
@@ -46,4 +50,3 @@ userSchema.statics.login = async function (email, password) {
 
 const User = mongoose.model('user', userSchema);
 module.exports = User;
-// static method to login user

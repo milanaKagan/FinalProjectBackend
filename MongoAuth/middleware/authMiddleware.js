@@ -24,15 +24,19 @@ const checkUser = (req, res, next) => {
         jwt.verify(token, 'secret key', async (err, decodedToken) => {
             if (err) {
                 res.locals.user = null;
+                res.locals.role = null;
                 next();
             } else {
                 let user = await User.findById(decodedToken.id);
+                //let role = decodedToken.role == "user" ? false : true;
+                res.locals.role = user.role;
                 res.locals.user = user;
                 next();
             }
         });
     } else {
         res.locals.user = null;
+        res.locals.role = null;
         next();
     }
 };
