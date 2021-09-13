@@ -28,7 +28,6 @@ const checkUser = (req, res, next) => {
                 next();
             } else {
                 let user = await User.findById(decodedToken.id);
-                //let role = decodedToken.role == "user" ? false : true;
                 res.locals.role = user.role;
                 res.locals.user = user;
                 next();
