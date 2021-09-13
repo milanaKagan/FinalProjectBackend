@@ -1,5 +1,4 @@
-const assert = require('assert'); // for the testing capabilites
-const expect = require('chai').expect; // for chai syntax 
+const assert = require('assert'); // for the testing capabilites 
 const anon_dao = require('./anon-dao'); // our testing subject
 const connectedKnex = require('./knex-connector-test');
 
@@ -14,6 +13,14 @@ describe('test anonymous user dao functions:', () => {
             username: 'fakeName',
             password: 'fakePass',
             email: 'fake@gmail.com'
+        };
+        customer1 ={
+         first_name: "first",
+         last_name: "last",
+         address: "address",
+         phone_no: "0000000",
+         credit_card_no: "00000",
+         user_id: 1
         };
 
         airline1 = {
@@ -37,6 +44,8 @@ describe('test anonymous user dao functions:', () => {
         await connectedKnex.raw(`select * from sp_insert_flight(${flight1.airline_id},${flight1.origin_country_id},
             ${flight1.destination_country_id},'${flight1.departure_time}','${flight1.landing_time}'
             ,${flight1.remaining_tickets})`);
+        await connectedKnex.raw(`select * from sp_insert_customer('${customer1.first_name}','${customer1.last_name}',
+        '${customer1.address}','${customer1.phone_no}','${customer1.credit_card_no}',${customer1.user_id})`);
     });
     afterEach(async function () {
         // 1. delete all records
@@ -264,11 +273,25 @@ describe('test anonymous user dao functions:', () => {
             ,${flight2.remaining_tickets})`);
         var actual = await anon_dao.get_flights_by_parameters(flight2.origin_country_id,
             flight2.destination_country_id,dateTime);
-        console.log(actual)
         assert.strictEqual(actual[0].id, '2');
         assert.strictEqual(actual[0].origin_country_id, flight2.origin_country_id);
         assert.strictEqual(actual[0].destination_country_id, flight2.destination_country_id);
         assert.strictEqual(Date.parse(actual[0].departure_time.toString()), Date.parse(flight2.departure_time));
         assert.strictEqual(Date.parse(actual[0].landing_time.toString()), Date.parse(flight2.landing_time));
+    });
+    it('get flights by parameters bad origin id', async function () {
+        var actual = await anon_dao.get_flights_by_parameters(0,
+            1,"2021-09-08 21:00:00.000");
+        assert.strictEqual(actual,-1);
+    });
+    it('get flights by parameters bad destination id', async function () {
+        var actual = await anon_dao.get_flights_by_parameters(1,
+            0,'2021-09-08 21:00:00.000');
+        assert.strictEqual(actual,-1);
+    });
+    it('get flights by parameters bad destination id', async function () {
+        var actual = await anon_dao.get_flights_by_parameters(1,
+            0,'');
+        assert.strictEqual(actual,-1);
     });
 })

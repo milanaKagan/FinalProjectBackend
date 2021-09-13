@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha anon-dao-test.js"
+    "test": "mocha airline-dao-test.js"
   },
   "repository": {
     "type": "git",
