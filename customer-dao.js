@@ -71,7 +71,7 @@ function get_ticket_by_id(id) {
                         return -1;
                 }
                 else {
-                        const result = await raw_repo.getRawResult(`select * from sp_get_ticket_by_id('${id}')`);
+                        const result = await raw_repo.getRawResult(`select * from sp_get_ticket_by_id(${id})`);
                         return result.rows;
                 }
         }
@@ -85,7 +85,7 @@ function get_user_by_id(id) {
                         return -1;
                 }
                 else {
-                        const result = await raw_repo.getRawResult(`select * from sp_get_user_by_id('${id}')`);
+                        const result = await raw_repo.getRawResult(`select * from sp_get_user_by_id(${id})`);
                         return result.rows;
                 }
         }

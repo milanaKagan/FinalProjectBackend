@@ -14,15 +14,6 @@ describe('test anonymous user dao functions:', () => {
             password: 'fakePass',
             email: 'fake@gmail.com'
         };
-        customer1 ={
-         first_name: "first",
-         last_name: "last",
-         address: "address",
-         phone_no: "0000000",
-         credit_card_no: "00000",
-         user_id: 1
-        };
-
         airline1 = {
             name: 'airline1',
             country_id: 1,
@@ -44,8 +35,6 @@ describe('test anonymous user dao functions:', () => {
         await connectedKnex.raw(`select * from sp_insert_flight(${flight1.airline_id},${flight1.origin_country_id},
             ${flight1.destination_country_id},'${flight1.departure_time}','${flight1.landing_time}'
             ,${flight1.remaining_tickets})`);
-        await connectedKnex.raw(`select * from sp_insert_customer('${customer1.first_name}','${customer1.last_name}',
-        '${customer1.address}','${customer1.phone_no}','${customer1.credit_card_no}',${customer1.user_id})`);
     });
     afterEach(async function () {
         // 1. delete all records

@@ -35,7 +35,7 @@ function delete_customer(id) {
         }
         return try_func(f);
 }
-function delete_tickets(id) {
+function delete_ticket(id) {
 
         const f = async () => {
                 if (id <= 0 || id == null) {
@@ -43,8 +43,8 @@ function delete_tickets(id) {
                         return -1;
                 }
                 else {
-                        const result = await raw_repo.getRawResult(`select * from sp_delete_tickets(${id})`);
-                        return result.rows[0].sp_delete_tickets;
+                        const result = await raw_repo.getRawResult(`select * from sp_delete_ticket(${id})`);
+                        return result.rows[0].sp_delete_ticket;
                 }
         }
         return try_func(f);
@@ -203,7 +203,7 @@ function update_airline(id, name, countryId, userId) {
 module.exports = {
         delete_airline_flights,
         delete_customer,
-        delete_tickets,
+        delete_ticket,
         delete_flight_tickets,
         get_airline_by_username,
         insert_airline,
