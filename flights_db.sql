@@ -52,22 +52,22 @@ COMMENT ON FUNCTION public.sp_delete_airline(_id bigint) IS 'airline user';
 CREATE FUNCTION public.sp_delete_airline_flights(_id bigint) RETURNS integer
     LANGUAGE plpgsql
     AS $$
-    declare
+declare
         rows_count int := 0;
     begin
         delete from flights
-        using flights
-        where flights.aireline_id = _id;
+        using airlines
+        where flights.airline_id = _id;
 
         with rows as  (
-            delete from airline
-            where airline.id = _id
+            delete from airlines
+            where airlines.id = _id
             RETURNING 1
         )
         select count(*) into rows_count from rows;
         return rows_count;
     end;
-    $$;
+$$;
 
 
 ALTER FUNCTION public.sp_delete_airline_flights(_id bigint) OWNER TO postgres;
@@ -79,7 +79,7 @@ ALTER FUNCTION public.sp_delete_airline_flights(_id bigint) OWNER TO postgres;
 CREATE PROCEDURE public.sp_delete_and_reset_all()
     LANGUAGE plpgsql
     AS $$
-    begin
+begin
 		
 		delete from tickets
         where id >= 1;
@@ -107,7 +107,7 @@ CREATE PROCEDURE public.sp_delete_and_reset_all()
         alter sequence users_id_seq restart with 1;
 				
     end;
-    $$;
+$$;
 
 
 ALTER PROCEDURE public.sp_delete_and_reset_all() OWNER TO postgres;
@@ -609,13 +609,13 @@ ALTER FUNCTION public.sp_get_flight_by_id(_id bigint) OWNER TO postgres;
 -- Name: sp_get_flights_by_airline_id(bigint); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
-CREATE FUNCTION public.sp_get_flights_by_airline_id(_airline_id bigint) RETURNS TABLE(id bigint, origin_country_id integer, destination_country_id integer, departure_time timestamp without time zone, landing_time timestamp without time zone)
+CREATE FUNCTION public.sp_get_flights_by_airline_id(_airline_id bigint) RETURNS TABLE(id bigint, origin_country_id integer, destination_country_id integer, departure_time timestamp without time zone, landing_time timestamp without time zone, remaining_tickets integer)
     LANGUAGE plpgsql
     AS $$
         BEGIN
-           RETURN QUERY
+            RETURN QUERY
             SELECT f.id, f.origin_country_id, f.destination_country_id,
-			f.departure_time, f.landing_time from flights f
+			f.departure_time, f.landing_time , f.remaining_tickets from flights f
             JOIN airlines a on a.id = f.airline_id
 			Where a.id = _airline_id;
         END;
@@ -677,12 +677,12 @@ ALTER FUNCTION public.sp_get_ticket_by_id(_id bigint) OWNER TO postgres;
 -- Name: sp_get_tickets_by_customer(bigint); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
-CREATE FUNCTION public.sp_get_tickets_by_customer(_customer_id bigint) RETURNS TABLE(id bigint, customer_id bigint)
+CREATE FUNCTION public.sp_get_tickets_by_customer(_customer_id bigint) RETURNS TABLE(id bigint, flight_id bigint, customer_id bigint)
     LANGUAGE plpgsql
     AS $$
-        BEGIN
+       BEGIN
            RETURN QUERY
-            SELECT t.id, t.costumer_id from tickets t
+            SELECT t.id, t.flight_id, t.costumer_id from tickets t
             JOIN customers c on c.id = t.costumer_id
 			Where c.id = _customer_id;
         END;
@@ -946,20 +946,20 @@ ALTER FUNCTION public.sp_update_customer(_id bigint, _first_name text, _last_nam
 CREATE FUNCTION public.sp_update_flight(_id bigint, _airline_id bigint, _origin_country_id integer, _destination_country_id integer, _departure_time timestamp without time zone, _landing_time timestamp without time zone, _remaining_tickets integer) RETURNS bigint
     LANGUAGE plpgsql
     AS $$
-        DECLARE
+DECLARE
             rows_count int := 0;
         BEGIN
             WITH rows AS (
             UPDATE flights
             SET airline_id=_airline_id, origin_country_id=_origin_country_id,
-			   destination_country_id= destination_country_id, departure_time=_departure_time, 
+			   destination_country_id= _destination_country_id, departure_time=_departure_time, 
 				landing_time =_landing_time, remaining_tickets = _remaining_tickets
             WHERE id = _id
             RETURNING 1)
             select count(*) into rows_count from rows;
             return rows_count;
         END;
-    $$;
+$$;
 
 
 ALTER FUNCTION public.sp_update_flight(_id bigint, _airline_id bigint, _origin_country_id integer, _destination_country_id integer, _departure_time timestamp without time zone, _landing_time timestamp without time zone, _remaining_tickets integer) OWNER TO postgres;
@@ -1147,18 +1147,16 @@ ALTER TABLE public.users ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
 --
 
 COPY public.airlines (id, name, country_id, user_id) FROM stdin;
-1	Private flight	53	1
-2	135 Airways	233	2
-3	1Time Airline	231	3
-4	2 Sqn No 1 Elementary Flying Training School	84	4
-5	213 Flight Unit	88	5
-6	223 Flight Unit State Airline	207	6
-7	224th Flight Unit	34	7
-8	247 Jet Ltd	91	8
-9	3D Aviation	214	9
-10	40-Mile Air	127	10
-12	testairline	1	13
-17	xxx8	1	14
+1	Private flight	205	1
+2	135 Airways	59	2
+3	1Time Airline	49	3
+4	2 Sqn No 1 Elementary Flying Training School	44	4
+5	213 Flight Unit	78	5
+6	223 Flight Unit State Airline	166	6
+7	224th Flight Unit	114	7
+8	247 Jet Ltd	205	8
+9	3D Aviation	62	9
+10	40-Mile Air	105	10
 \.
 
 
@@ -1168,6 +1166,9 @@ COPY public.airlines (id, name, country_id, user_id) FROM stdin;
 
 COPY public.countries (id, name) FROM stdin;
 1	Afghanistan
+2	Åland Islands
+3	Albania
+4	Algeria
 5	American Samoa
 6	AndorrA
 7	Angola
@@ -1407,12 +1408,6 @@ COPY public.countries (id, name) FROM stdin;
 241	Yemen
 242	Zambia
 243	Zimbabwe
-244	Åland Islands
-246	tst
-247	tst2
-248	tst3
-249	tst4
-250	tst5update
 \.
 
 
@@ -1421,17 +1416,16 @@ COPY public.countries (id, name) FROM stdin;
 --
 
 COPY public.customers (id, first_name, last_name, address, phone_no, credit_card_no, user_id) FROM stdin;
-1	Isaac	Martinez	Spain, Toledo, Paseo de Zorrilla 6250	915-007-409	372349619384358	1
-2	Yvo	Jagtenberg	Netherlands, Ubach Over Worms, Grootveenweg 9026	(949)-536-0971	343351273105141	2
-3	Paige	Gibson	Ireland, Skerries, Westmoreland Street 6436	021-240-5706	342205557521913	3
-4	Ulf	Goertz	Germany, Altdorf Bei Nürnberg, Birkenweg 962	0806-9857054	347720284161424	4
-5	Laly	Muller	France, Grenoble, Avenue du Fort-Caire 3865	05-42-82-72-45	371834231175731	5
-6	Wallace	Peters	Ireland, Sallins, High Street 3114	071-286-6927	341173697070608	6
-7	کیانا	کریمی	Iran, مشهد, آیت‌الله سعیدی 3913	007-14854774	346981798920694	7
-8	Lija	da Costa	Brazil, Maricá, Rua São Pedro  3567	(46) 7456-7813	372508561638612	8
-9	Pedro	Reyes	Spain, Elche, Calle de La Almudena 5560	927-957-744	347427545072446	9
-10	Donna	Wood	Ireland, Dunboyne, New Street 4303	041-605-3024	378108784480951	10
-12	xss	x	x	x	x	13
+1	Lilja	Mikkola	Finland, Pöytyä, Hämeentie 7463	09-454-464	372349619384358	1
+2	Raynor	Van den Acker	Netherlands, Sint Maartensbrug, J.W.C. Bloemstraat 2454	(910)-728-4130	343351273105141	2
+3	Anton	Lauri	Finland, Haapavesi, Suvantokatu 5019	03-280-031	342205557521913	3
+4	Alexia	Moreau	France, Tours, Avenue Paul Eluard 9169	04-58-24-77-26	347720284161424	4
+5	Esteban	Nguyen	Switzerland, Bönigen, Rue Laure-Diebold 8279	075 270 63 96	371834231175731	5
+6	Jason	Chambers	United Kingdom, Exeter, Grange Road 8436	015242 22353	341173697070608	6
+7	Ari	Aragão	Brazil, Curitiba, Rua Espirito Santo  509	(58) 5853-8160	346981798920694	7
+8	Axelle	Deschamps	France, Reims, Rue de la Mairie 7299	01-11-17-54-78	372508561638612	8
+9	Denise	Clark	Australia, Wollongong, Spring St 4096	00-2651-0950	347427545072446	9
+10	Elias	Nielsen	Denmark, Nørrebro, Bakken 7335	50072607	378108784480951	10
 \.
 
 
@@ -1440,34 +1434,29 @@ COPY public.customers (id, first_name, last_name, address, phone_no, credit_card
 --
 
 COPY public.flights (id, airline_id, origin_country_id, destination_country_id, departure_time, landing_time, remaining_tickets) FROM stdin;
-1	1	24	161	2021-07-16 00:00:00	2021-04-06 00:00:00	209
-2	1	115	156	2021-11-16 00:00:00	2021-04-18 00:00:00	18
-3	2	57	31	2021-04-13 00:00:00	2021-10-18 00:00:00	115
-4	3	182	205	2021-02-05 00:00:00	2021-04-10 00:00:00	36
-5	3	100	31	2021-08-09 00:00:00	2021-05-12 00:00:00	46
-6	4	135	209	2021-05-03 00:00:00	2021-01-08 00:00:00	179
-7	4	113	210	2021-08-17 00:00:00	2021-08-06 00:00:00	229
-8	4	90	123	2021-04-20 00:00:00	2021-08-14 00:00:00	200
-9	5	150	36	2021-05-06 00:00:00	2021-09-15 00:00:00	117
-10	5	223	160	2021-09-01 00:00:00	2021-04-13 00:00:00	0
-11	6	217	170	2021-02-18 00:00:00	2021-11-11 00:00:00	68
-12	7	5	174	2021-03-27 00:00:00	2021-07-25 00:00:00	157
-13	7	227	147	2021-11-03 00:00:00	2021-05-18 00:00:00	53
-14	8	145	131	2021-07-06 00:00:00	2021-01-18 00:00:00	156
-15	8	115	45	2021-05-07 00:00:00	2021-05-19 00:00:00	229
-16	8	11	12	2021-03-13 00:00:00	2021-07-19 00:00:00	30
-17	9	78	68	2021-10-22 00:00:00	2021-06-06 00:00:00	80
-18	9	211	117	2021-08-24 00:00:00	2021-12-20 00:00:00	62
-19	9	94	50	2021-01-05 00:00:00	2021-06-07 00:00:00	184
-20	10	125	179	2021-05-21 00:00:00	2021-10-14 00:00:00	103
-24	1	1	5	2021-08-29 09:10:59.897666	2021-08-30 09:10:59.897666	100
-25	1	1	5	2021-08-29 22:00:59.897666	2021-08-30 09:10:59.897666	100
-26	1	1	5	2021-08-28 22:00:59.897666	2021-08-30 09:10:59.897666	100
-27	1	1	5	2021-08-28 10:01:03.901308	2021-08-28 09:01:03.901308	100
-28	1	1	5	2021-08-28 10:01:03.901308	2021-08-28 10:01:03.901308	100
-29	1	5	6	2021-08-31 23:00:00	2021-09-01 00:00:00	100
-30	2	5	6	2021-08-31 23:00:00	2021-09-01 00:00:00	100
-36	17	1	250	2021-08-31 23:00:00	2021-08-31 23:00:00	140
+1	1	144	55	2021-11-06 00:00:00	2021-02-16 00:00:00	245
+2	1	218	99	2021-12-26 00:00:00	2021-09-16 00:00:00	218
+3	1	130	123	2021-12-13 00:00:00	2021-01-25 00:00:00	86
+4	2	127	28	2021-03-27 00:00:00	2021-01-26 00:00:00	185
+5	2	215	91	2021-01-21 00:00:00	2021-03-13 00:00:00	21
+6	3	202	199	2021-07-05 00:00:00	2021-03-15 00:00:00	216
+7	3	97	67	2021-09-11 00:00:00	2021-07-26 00:00:00	76
+8	4	12	225	2021-04-09 00:00:00	2021-01-13 00:00:00	206
+9	4	235	241	2021-08-04 00:00:00	2021-05-18 00:00:00	231
+10	5	193	134	2021-08-21 00:00:00	2021-06-02 00:00:00	69
+11	5	85	188	2021-11-11 00:00:00	2021-03-01 00:00:00	154
+12	5	129	216	2021-10-25 00:00:00	2021-06-07 00:00:00	95
+13	6	156	96	2021-06-21 00:00:00	2021-09-16 00:00:00	196
+14	6	74	151	2021-04-12 00:00:00	2021-08-13 00:00:00	111
+15	6	193	64	2021-09-01 00:00:00	2021-02-08 00:00:00	17
+16	7	120	81	2021-12-01 00:00:00	2021-07-14 00:00:00	47
+17	7	26	22	2021-11-04 00:00:00	2021-09-19 00:00:00	34
+18	8	50	209	2021-06-12 00:00:00	2021-09-23 00:00:00	32
+19	8	64	127	2021-03-10 00:00:00	2021-06-18 00:00:00	127
+20	9	62	63	2021-11-20 00:00:00	2021-09-23 00:00:00	135
+21	9	92	160	2021-11-22 00:00:00	2021-12-21 00:00:00	248
+22	9	182	13	2021-12-04 00:00:00	2021-03-10 00:00:00	46
+23	10	90	160	2021-04-06 00:00:00	2021-03-25 00:00:00	122
 \.
 
 
@@ -1476,6 +1465,7 @@ COPY public.flights (id, airline_id, origin_country_id, destination_country_id, 
 --
 
 COPY public.tickets (id, flight_id, costumer_id) FROM stdin;
+1	1	1
 2	2	2
 3	3	3
 4	4	4
@@ -1485,7 +1475,6 @@ COPY public.tickets (id, flight_id, costumer_id) FROM stdin;
 8	8	8
 9	9	9
 10	10	10
-11	11	12
 \.
 
 
@@ -1494,19 +1483,16 @@ COPY public.tickets (id, flight_id, costumer_id) FROM stdin;
 --
 
 COPY public.users (id, username, password, email) FROM stdin;
-1	IsaacboD	Isaac_password	isaac.martinez@example.com
-2	YvofHj	Yvo_password	yvo.jagtenberg@example.com
-3	PaigeG0r	Paige_password	paige.gibson@example.com
-4	UlfYTa	Ulf_password	ulf.goertz@example.com
-5	LalyezO	Laly_password	laly.muller@example.com
-6	Wallacednd	Wallace_password	wallace.peters@example.com
-7	کیاناjhg	کیانا_password	khyn.khrymy@example.com
-8	LijaUVO	Lija_password	lija.dacosta@example.com
-9	Pedroad6	Pedro_password	pedro.reyes@example.com
-10	Donna1tF	Donna_password	donna.wood@example.com
-11	moka	tahat	mokamail
-14	moka2	tahat1	mokamail2
-13	mokaqq2	tahatd1	mokamailc2
+1	Liljau1I	Lilja_password	lilja.mikkola@example.com
+2	RaynoriDX	Raynor_password	raynor.vandenacker@example.com
+3	AntonJGs	Anton_password	anton.lauri@example.com
+4	AlexiazPm	Alexia_password	alexia.moreau@example.com
+5	EstebanU9l	Esteban_password	esteban.nguyen@example.com
+6	Jason3d0	Jason_password	jason.chambers@example.com
+7	Ariamy	Ari_password	ari.aragao@example.com
+8	AxelledTo	Axelle_password	axelle.deschamps@example.com
+9	DeniseO29	Denise_password	denise.clark@example.com
+10	EliasC0D	Elias_password	elias.nielsen@example.com
 \.
 
 
@@ -1514,42 +1500,42 @@ COPY public.users (id, username, password, email) FROM stdin;
 -- Name: airlines_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.airlines_id_seq', 17, true);
+SELECT pg_catalog.setval('public.airlines_id_seq', 10, true);
 
 
 --
 -- Name: countries_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.countries_id_seq', 250, true);
+SELECT pg_catalog.setval('public.countries_id_seq', 243, true);
 
 
 --
 -- Name: customers_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.customers_id_seq', 12, true);
+SELECT pg_catalog.setval('public.customers_id_seq', 10, true);
 
 
 --
 -- Name: flights_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.flights_id_seq', 36, true);
+SELECT pg_catalog.setval('public.flights_id_seq', 23, true);
 
 
 --
 -- Name: tickets_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.tickets_id_seq', 11, true);
+SELECT pg_catalog.setval('public.tickets_id_seq', 10, true);
 
 
 --
 -- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.users_id_seq', 15, true);
+SELECT pg_catalog.setval('public.users_id_seq', 10, true);
 
 
 --

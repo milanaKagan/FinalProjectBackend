@@ -330,7 +330,8 @@ describe('test customer user dao functions:', () => {
 
     });
     it('get customer by existent id', async function () {
-        var actual = await customer_dao.get_customer_by_id(1);        
+        var actual = await customer_dao.get_customer_by_id(1); 
+        console.log(actual)       
         assert.strictEqual(actual[0].id, '1');
         assert.strictEqual(actual[0].first_name, customer1.first_name);
         assert.strictEqual(actual[0].last_name, customer1.last_name);
