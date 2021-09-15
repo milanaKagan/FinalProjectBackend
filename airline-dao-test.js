@@ -54,7 +54,6 @@ describe('test airline user dao functions:', () => {
         // 1. delete all records
         await connectedKnex.raw('call sp_delete_and_reset_all()');
     });
-
     it('delete airline and flights', async function () {
         var actual = await airline_dao.delete_airline_flights(1);
         assert.strictEqual(actual, 1);
@@ -75,7 +74,7 @@ describe('test airline user dao functions:', () => {
         var actual = await airline_dao.delete_customer(1);
         assert.strictEqual(actual, '1');
         var customer = await customer_dao.get_customer_by_id(1);
-        assert.strictEqual(customer, undefined);
+        assert.strictEqual(customer[0], undefined);
 
     });
     it('delete customer not existent id', async function () {
@@ -95,7 +94,7 @@ describe('test airline user dao functions:', () => {
         var actual = await airline_dao.delete_ticket(1);
         assert.strictEqual(actual, '1');
         var ticket = await customer_dao.get_ticket_by_id(1);
-        assert.strictEqual(ticket, undefined);
+        assert.strictEqual(ticket[0], undefined);
 
     });
     it('delete ticket not existent id', async function () {
@@ -117,7 +116,7 @@ describe('test airline user dao functions:', () => {
         var flight = await anon_dao.get_flight_by_id(1);
         assert.strictEqual(flight[0], undefined);
         var ticket = await customer_dao.get_ticket_by_id(1);
-        assert.strictEqual(ticket, undefined);
+        assert.strictEqual(ticket[0], undefined);
     });
     it('delete flight and tickets not existent id', async function () {
         var actual = await airline_dao.delete_flight_tickets(1000);

@@ -129,9 +129,9 @@ describe('test admin user dao functions:', () => {
         var actual = await admin_dao.delete_customers_user(2);
         assert.strictEqual(actual, 1);
         var customer = await customer_dao.get_customer_by_id(2);
-        assert.strictEqual(customer, undefined);
+        assert.strictEqual(customer[0], undefined);
         var user = await customer_dao.get_user_by_id(2);
-        assert.strictEqual(user, undefined);
+        assert.strictEqual(user[0], undefined);
     });
     it('delete customer and user bad id ', async function () { 
         var actual = await admin_dao.delete_customers_user(0);

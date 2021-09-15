@@ -43,7 +43,6 @@ describe('test anonymous user dao functions:', () => {
 
     it('get flight by existent id', async function () {
         var actual = await anon_dao.get_flight_by_id(1);
-        console.log(actual)
         assert.strictEqual(actual[0].id, '1');
         assert.strictEqual(actual[0].destination_country_id, flight1.destination_country_id);
         assert.strictEqual(actual[0].origin_country_id, flight1.origin_country_id);

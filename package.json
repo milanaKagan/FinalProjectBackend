@@ -4,8 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha customer-dao-test.js"
-  },
+    "test": "mocha *-dao-test.js"  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/milanaKagan/FinalProjectBackend.git"

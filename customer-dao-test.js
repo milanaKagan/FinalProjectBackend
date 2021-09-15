@@ -2,7 +2,7 @@ const assert = require('assert'); // for the testing capabilites
 const customer_dao = require('./customer-dao');// our testing subject
 const connectedKnex = require('./knex-connector-test');
 
-describe('test admin user dao functions:', () => {
+describe('test customer user dao functions:', () => {
     beforeEach(async function () {
         // 1. delete all records
         await connectedKnex.raw('call sp_delete_and_reset_all()');
