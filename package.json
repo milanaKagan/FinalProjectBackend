@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha admin-dao-test.js"
+    "test": "mocha customer-dao-test.js"
   },
   "repository": {
     "type": "git",

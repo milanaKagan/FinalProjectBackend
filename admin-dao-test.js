@@ -1,7 +1,6 @@
 const assert = require('assert'); // for the testing capabilites
 const anon_dao = require('./anon-dao');
 const customer_dao = require('./customer-dao');
-const airline_dao = require('./airline-dao');
 const admin_dao = require('./admin-dao');// our testing subject
 const connectedKnex = require('./knex-connector-test');
 

@@ -1,7 +1,7 @@
 const raw_repo = require('./raw_repo')
 function try_func(f) {
         try {
-                f();
+               return f();
         }
         catch (e) {
                 return e.message
@@ -261,16 +261,16 @@ function update_user(id, username, password, email) {
         return try_func(f);
 }
 module.exports = {
-        get_tickets_by_customer,
-        delete_ticket,
-        get_customer_by_id,
-        get_customer_by_username,
-        get_ticket_by_id,
-        get_user_by_id,
-        get_user_by_username,
+        get_tickets_by_customer,//
+        delete_ticket,//
+        get_customer_by_id,//
+        get_customer_by_username,//
+        get_ticket_by_id,//
+        get_user_by_id,//
+        get_user_by_username,//
         insert_customer,
         update_customer,
         insert_ticket,
         update_ticket,
-        update_user
+        update_user//
 }
