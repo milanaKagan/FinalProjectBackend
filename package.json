@@ -3,8 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "isTest" : true,
   "scripts": {
-    "test": "mocha *-dao-test.js"  },
+    "test": "mocha *-dao-test.js"  
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/milanaKagan/FinalProjectBackend.git"
